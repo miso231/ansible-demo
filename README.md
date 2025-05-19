@@ -115,23 +115,26 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
 # Useful stuff
 
 ## Commands
-```
-# Show inverntory with all variables
-ansible-inventory -i inventory.yml --list
-
-# Show inverntory hosts organized into groups
-ansible-inventory -i inventory.yml --graph
-
-# Run the playbook
-ansible-playbook -i inventory.yml simple-playbook.yml
-
-# List server's fact
-ansible -i inventory.yml web-test-1 -m setup
-
-# Run single command on tergeted hosts
-ansible all -i inventory.yml -m shell -a "df -h"
-
-```
+* Show inverntory with all variables
+  ```
+  ansible-inventory -i inventory.yml --list
+  ```
+* Show inverntory hosts organized into groups
+  ```
+  ansible-inventory -i inventory.yml --graph
+  ```
+* Run the playbook
+  ```
+  ansible-playbook -i inventory.yml simple-playbook.yml
+  ```
+* List server's fact
+  ```
+  ansible -i inventory.yml web-test-1 -m setup
+  ```
+* Run single command on tergeted hosts
+  ```
+  ansible all -i inventory.yml -m shell -a "df -h"
+  ```
 
 ## Parameters of ansible-playbook
 * `--list-hosts`
