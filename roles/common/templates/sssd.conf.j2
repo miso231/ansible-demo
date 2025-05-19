@@ -1,0 +1,70 @@
+# {{ ansible_managed }}
+
+[sssd]
+config_file_version  = 2
+reconnection_retries = 3
+sbus_timeout         = 30
+domains              = {{ sssd_domain }}
+{% if ansible_distribution == "Debian" %}
+services             = pam,nss,ssh,sudo
+{% endif %}
+
+[pam]
+reconnection_retries           = 3
+offline_credentials_expiration = 2
+offline_failed_login_attempts  = 3
+offline_failed_login_delay     = 5
+
+[nss]
+filter_groups                  = root
+filter_users                   = root
+reconnection_retries           = 3
+entry_cache_nowait_percentage  = 75
+
+[domain/{{ sssd_domain }}]
+debug_level                    = 3
+min_id                         = 1000
+enumerate                      = false
+case_sensitive                 = false
+cache_credentials              = true
+krb5_store_password_if_offline = true
+auto_private_groups            = false
+simple_allow_groups            = {{ (sssd_auth_groups + [device_role]) | join(',') }}
+
+# LDAP connection settings
+id_provider               = ldap
+auth_provider             = ldap
+chpass_provider           = ldap
+access_provider           = simple
+subdomains_provider       = none
+selinux_provider          = none
+session_provider          = none
+ldap_uri                  = {{ ['ldaps://'] | product(sssd_server) | map('join') | join(',') }}
+ldap_default_bind_dn      = {{ sssd_bind_user }}
+ldap_default_authtok      = {{ sssd_bind_pass }}
+ldap_default_authtok_type = password
+default_shell             = /bin/bash
+
+# LDAP General
+ldap_id_use_start_tls     = false
+ldap_schema               = rfc2307bis
+ldap_tls_cacertdir        = {{ sssd_cert_dir }}
+ldap_tls_cacert           = {{ sssd_cert_dir }}corporate_ca.crt
+ldap_search_base          = DC=sample,DC=io
+ldap_user_search_base     = CN=users,CN=accounts,DC=sample,DC=io
+ldap_group_search_base    = CN=groups,CN=accounts,DC=sample,DC=io
+
+# LDAP Class settings
+ldap_user_object_class    = person
+ldap_user_name            = uid
+ldap_user_uid_number      = uidNumber
+ldap_user_gid_number      = gidNumber
+ldap_user_home_directory  = homeDirectory
+ldap_user_ssh_public_key  = ipaSshPubKey
+ldap_user_member_of       = memberOf
+
+ldap_group_object_class   = posixgroup
+ldap_group_name           = cn
+ldap_group_uuid           = ipaUniqID
+ldap_group_gid_number     = gidNumber
+ldap_group_member         = member

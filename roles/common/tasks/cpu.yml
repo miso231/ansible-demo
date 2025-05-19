@@ -1,0 +1,20 @@
+---
+- name: Install cpufrequtils
+  ansible.builtin.package:
+    state: present
+    name: cpufrequtils
+  notify:
+  - restart cpufrequtils
+
+- name: Template cpufrequtils config file
+  ansible.builtin.copy:
+    content: "GOVERNOR=\"performance\"\n"
+    dest: /etc/default/cpufrequtils
+  notify:
+  - restart cpufrequtils
+
+- name: Start and enable cpufrequtils
+  ansible.builtin.service:
+    name: cpufrequtils
+    state: started
+    enabled: yes

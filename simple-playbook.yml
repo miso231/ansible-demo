@@ -1,0 +1,26 @@
+- name: Test Ansible Playbook
+  become: yes
+  hosts: all
+
+  tasks:
+
+  - name: Display hostname and OS
+    ansible.builtin.debug:
+      msg: "This is ansible from {{ ansible_hostname }}, running {{ ansible_distribution }}"
+
+  - name: Install basic tools
+    ansible.builtin.package:
+      state: present
+      name:
+      - "sudo"
+      - "vim"
+      - "htop"
+      - "curl"
+
+  - name: Disallow root SSH login
+    ansible.builtin.lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "#PermitRootLogin"
+      line: "PermitRootLogin no"
+      state: present
+

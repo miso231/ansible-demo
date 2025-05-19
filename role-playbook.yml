@@ -1,0 +1,13 @@
+- name: Test Ansible Playbook
+  become: yes
+  hosts: "{{ servers }}"
+
+  tasks:
+
+  - name: Include selected roles
+    ansible.builtin.include_role:
+      name: "{{ item_role }}"
+    loop: "{{ server_roles }}"
+    loop_control:
+      loop_var: item_role
+    tags: always

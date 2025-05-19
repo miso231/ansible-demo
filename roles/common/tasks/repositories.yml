@@ -1,0 +1,18 @@
+---
+- name: Add repository key for Elastic Stack
+  ansible.builtin.apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+  tags:
+  - repositories
+
+- name: Add repository for Elastic Stack 7.x packages
+  ansible.builtin.apt_repository:
+    repo: deb http://artifacts.elastic.co/packages/7.x/apt stable main
+  tags:
+  - repositories
+
+- name: Add repository for Elastic Stack 8.x packages
+  ansible.builtin.apt_repository:
+    repo: deb http://artifacts.elastic.co/packages/8.x/apt stable main
+  tags:
+  - repositories

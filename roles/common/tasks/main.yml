@@ -1,0 +1,25 @@
+---
+- name: Import common
+  ansible.builtin.import_tasks: common.yml
+
+- name: Import SSH
+  ansible.builtin.import_tasks: ssh.yml
+  tags: ssh
+
+- name: Include VMs tasks
+  ansible.builtin.include_tasks: virtual.yml
+  tags:
+  - virtual
+
+# - name: Import SSSD
+#   ansible.builtin.import_tasks: sssd.yml
+#   tags: sssd
+
+# - name: Import Repositories
+#   ansible.builtin.import_tasks: repositories.yml
+#   tags: repositories
+
+# - name: Include CPU
+#   ansible.builtin.include_tasks: cpu.yml
+#   when: manufacturer != "virtual"
+#   tags: cpu

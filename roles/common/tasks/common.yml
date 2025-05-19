@@ -1,0 +1,88 @@
+---
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Template /etc/hosts
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: Set root password
+  ansible.builtin.user:
+    name: root
+    password: "{{ root_password }}"
+
+- name: Create Ansible group
+  ansible.builtin.group:
+    name: ansible
+    state: present
+    gid: "1000"
+
+- name: Create Ansible user
+  ansible.builtin.user:
+    name: ansible
+    group: ansible
+    comment: Ansible system user
+    uid: "1000"
+
+- name: Upload Ansible key
+  ansible.builtin.authorized_key:
+    user: ansible
+    key: "{{ ansible_key }}"
+    exclusive: yes
+
+- name: Sudo for Ansible user
+  ansible.builtin.copy:
+    content: "ansible        ALL=(ALL)       NOPASSWD: ALL\n"
+    dest: /etc/sudoers.d/ansibleROOT
+
+- name: Remove ansible password
+  ansible.builtin.user:
+    name: ansible
+    password: "*"
+
+- name: Set timezone
+  ansible.builtin.timezone:
+    name: UTC
+
+- name: Enable and start ntp
+  ansible.builtin.service:
+    name: systemd-timesyncd
+    state: started
+    enabled: yes
+
+- name: Install basic tools
+  ansible.builtin.package:
+    state: present
+    name:
+    - "sudo"
+    - "vim"
+    - "htop"
+    - "curl"
+    - "dnsutils" # dig
+    - "jq"
+    - "lsof"
+    - "iotop"
+    - "unzip"
+    - "mc"
+    - "screen"
+    - "net-tools" # netstat
+    - "zsh"
+    - "tree"
+
+- name: Stop, disable and mask apport service
+  ansible.builtin.systemd:
+    name: apport.service
+    state: stopped
+    masked: yes
+    enabled: no
+  when: ansible_distribution == "Ubuntu"
+  tags: apport
+
+- name: Tune sysctl
+  ansible.builtin.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: "/etc/sysctl.d/local.conf"
+  loop: "{{ sysctl_common | combine( sysctl | default({}) ) | dict2items }}"

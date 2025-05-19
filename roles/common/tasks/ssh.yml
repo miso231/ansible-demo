@@ -1,0 +1,11 @@
+---
+- name: Disallow root SSH access and disable password authentication
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+  - { regexp: "^#?PermitRootLogin",        line: "PermitRootLogin {{ ssh_permit_root_login | default('no') }}" }
+  - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
+  notify: restart sshd

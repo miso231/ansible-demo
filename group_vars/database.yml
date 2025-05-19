@@ -1,0 +1,6 @@
+server_roles:
+- common
+- geerlingguy.postgresql
+
+postgresql_databases:
+- name: demo-database

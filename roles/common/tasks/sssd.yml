@@ -1,0 +1,70 @@
+
+- name: Install sssd
+  ansible.builtin.apt:
+    name: sssd-ldap
+    state: present
+  register: sssd_install
+
+- name: Install sssd-tools
+  ansible.builtin.apt:
+    name: sssd-tools
+    state: present
+
+# Workaround, as sssd config is not in package
+# and service is in failed state after install
+- name: Reset failed systemd unit sssd
+  ansible.builtin.shell: "systemctl reset-failed sssd.service"
+  when: sssd_install.changed
+
+- name: Create dir for certs
+  ansible.builtin.file:
+    path: "{{ sssd_cert_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "750"
+
+- name: Deploy corporate CA certificate
+  ansible.builtin.copy:
+    content: "{{ ssl_ca_crt }}"
+    dest: "{{ sssd_cert_dir }}/corporate_ca.crt"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Deploy sssd config
+  ansible.builtin.template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    owner: root
+    group: root
+    mode: "0600"
+  notify: restart sssd
+
+- name: Enable sssd in SSH access - step 1
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^AuthorizedKeysCommand "
+    line: "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys"
+    state: present
+  notify: restart sshd
+
+- name: Enable sssd in SSH access - step 2
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^AuthorizedKeysCommandUser "
+    line: "AuthorizedKeysCommandUser root"
+    state: present
+  notify: restart sshd
+
+- name: Auto-create /home directories
+  ansible.builtin.lineinfile:
+    dest: /etc/pam.d/common-session
+    insertafter: 'session\s+optional\s+pam_sss\.so'
+    line: "session required        pam_mkhomedir.so skel=/etc/skel/ umask=0022"
+
+- name: Run and enable sssd
+  ansible.builtin.service:
+    name: sssd
+    state: started
+    enabled: yes

@@ -1,0 +1,15 @@
+root_password: "$y$j9T$eiEzQWgdlV3K6J7U2lzh61$3cyAfWCLarq.Z7uMRf8ZFExhRIogVeDVj40nG0u1N9." # super.secret.password
+ansible_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDy3IqWR2MLbjY7/KqZHuf6zQn6U5he7cx1H+YlPdzEZ ansible"
+
+server_roles:
+- common
+
+sysctl_common:
+  vm.swappiness: 1
+  net.core.somaxconn: 16384
+
+# sssd_domain: "sample.io"
+# sssd_bind_user: "uid=service_bind_user,cn=users,dc=sample,dc=io"
+# sssd_bind_pass: pass
+# sssd_auth_groups:
+#   - sudoers

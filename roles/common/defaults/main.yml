@@ -1,0 +1,2 @@
+sssd_cert_dir: "/etc/sssd/certs/"
+
