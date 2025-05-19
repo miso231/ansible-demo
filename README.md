@@ -26,6 +26,8 @@ ansible-playbook -i inventory.yml simple-playbook.yml
 The ansible run should work without any error
 
 ## Task 2
+
+### Assignment
 Alter the `simple-playbook.yml` to install docker
 
 * Set up docker apt repository
