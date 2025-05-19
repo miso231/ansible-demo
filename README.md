@@ -131,7 +131,7 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
   ```
   ansible -i inventory.yml web-test-1 -m setup
   ```
-* Run single command on tergeted hosts
+* Run single command on targeted hosts
   ```
   ansible all -i inventory.yml -m shell -a "df -h"
   ```
