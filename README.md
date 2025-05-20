@@ -6,6 +6,7 @@
 ## Setup your environment
 * [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version <= 2.9.x is currently supported)
 * Deploy test hosts in your infrastructure
+  * Ubuntu Server 22.04 is used in this demo
   * Add your SSH key to the the hosts
   * Ensure you have SSH connectivity to them from your laptop
 * Alter inventory file `inventory.yml` with your hosts configuration
@@ -112,6 +113,51 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
   psql -c "\l"
   ```
 * Check URL of both web servers (http://<WEB_SERVER_IP>) and verify that Nginx welcome page is present
+
+## Task 5
+
+### Assignment
+* Create a new role to install [2048 game](https://github.com/alexwhen/docker-2048) on the webservers in docker container
+* Configure nginx as reverse proxy to the game
+
+### Implementation
+* Create a new file in path `roles/game-2048/tasks/main.yml`
+  ```
+  - name: Run 2048 game container
+    community.docker.docker_container:
+      name: 2048
+      image: alexwhen/docker-2048
+      state: started
+      restart_policy: always
+      ports:
+        - "localhost:8080:80"
+  ```
+* Alter groupvars for `webserver` group
+  ```
+  server_roles:
+  - common
+  - geerlingguy.nginx
+  - game-2048
+    nginx_remove_default_vhost: true
+
+  nginx_vhosts:
+    - listen: "80"
+      server_name: "_"
+      extra_parameters: |
+        location / {
+            proxy_pass http://localhost:8080;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+  ```
+* Run the `role-playbook.yml` playbook
+
+### Test
+Play the game
+
 # Useful stuff
 
 ## Commands
