@@ -130,7 +130,7 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
       state: started
       restart_policy: always
       ports:
-        - "localhost:8080:80"
+        - "127.0.0.1:8080:80"
   ```
 * Alter groupvars for `webserver` group
   ```
@@ -138,8 +138,8 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
   - common
   - geerlingguy.nginx
   - game-2048
-    nginx_remove_default_vhost: true
 
+  nginx_remove_default_vhost: true
   nginx_vhosts:
     - listen: "80"
       server_name: "_"
