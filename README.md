@@ -4,7 +4,7 @@
 * This repo demonstrates how ansible works and contains simple tasks to show various use cases
 
 ## Setup your environment
-* [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (version <= 2.9.x is currently supported)
+* [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (2.9.x or newer)
 * Deploy test hosts in your infrastructure
   * Ubuntu Server 22.04 is used in this demo
   * Add your SSH key to the the hosts
