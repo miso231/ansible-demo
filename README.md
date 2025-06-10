@@ -7,7 +7,7 @@
 * [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (2.9.x or newer)
 * Deploy test hosts in your infrastructure
   * Ubuntu Server 22.04 is used in this demo
-  * Add your SSH key to the the hosts
+  * Add your SSH key to the the hosts (use user `ansible`)
   * Ensure you have SSH connectivity to them from your laptop
 * Alter inventory file `inventory.yml` with your hosts configuration
 
