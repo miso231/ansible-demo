@@ -8,6 +8,7 @@
 * Deploy test hosts in your infrastructure
   * Ubuntu Server 22.04 is used in this demo
   * Add your SSH key to the the hosts (use user `ansible`)
+  * Make sure `ansible` has sudo rights
   * Ensure you have SSH connectivity to them from your laptop
 * Alter inventory file `inventory.yml` with your hosts configuration
 
@@ -117,7 +118,7 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
 ## Task 5
 
 ### Assignment
-* Create a new role to install [2048 game](https://github.com/alexwhen/docker-2048) on the webservers in docker container
+* Create a new role to install [2048 game](https://github.com/agrawpri/2048-docker) on the webservers in docker container
 * Configure nginx as reverse proxy to the game
 
 ### Implementation
@@ -126,7 +127,7 @@ ansible-playbook -i inventory.yml -e servers=all role-playbook.yml
   - name: Run 2048 game container
     community.docker.docker_container:
       name: 2048
-      image: alexwhen/docker-2048
+      image: agrawpri/2048-docker
       state: started
       restart_policy: always
       ports:
